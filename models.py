@@ -4,7 +4,7 @@ from datetime import datetime
 db = SQLAlchemy()
 
 class User(db.Model):
-    id = db.Column(db.String(10), primary_key=True)  # ランダムID
+    id = db.Column(db.String(10), primary_key=True)
     username = db.Column(db.String(100), nullable=False, unique=True)
     posts = db.relationship('Post', backref='author', lazy=True)
 

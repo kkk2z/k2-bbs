@@ -1,17 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for
 from models import db, Post, User
 import random
 import string
-from werkzeug.security import generate_password_hash, check_password_hash
-from config import Config
 
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
 @app.before_first_request
 def create_tables():
-    db.create_all()
+    with app.app_context():
+        db.create_all()
 
 def generate_random_id():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=10))
@@ -72,7 +72,6 @@ def edit_user(username):
 
 @app.route('/admin', methods=['GET'])
 def admin():
-    # モデレータ機能: 全投稿を表示
     posts = Post.query.order_by(Post.timestamp.desc()).all()
     return render_template('admin.html', posts=posts)
 
